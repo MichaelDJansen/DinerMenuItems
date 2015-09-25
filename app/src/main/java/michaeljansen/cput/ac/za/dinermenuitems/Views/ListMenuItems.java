@@ -12,7 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import michaeljansen.cput.ac.za.dinermenuitems.R;
+import michaeljansen.cput.ac.za.dinermenuitems.Services.Impl.MenuItemServiceImpl;
+import michaeljansen.cput.ac.za.dinermenuitems.Services.MenuItemService;
 
 public class ListMenuItems extends AppCompatActivity {
 
@@ -25,7 +30,7 @@ public class ListMenuItems extends AppCompatActivity {
         setContentView(R.layout.activity_list_menu_items);
 
         listView = (ListView) findViewById(R.id.lstViewItems);
-
+/*
         final michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[] menuItems =
                 new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[]{
                 new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.
@@ -35,11 +40,23 @@ public class ListMenuItems extends AppCompatActivity {
                         new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.
                         Builder(307,"Travis Terrific hamburger","Burger","Burger with relish and bacon",60.00f).build()
                 };
+*/
+        MenuItemServiceImpl service = new MenuItemServiceImpl();
+
+        List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> items= new ArrayList<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem>();
+
+        items = service.getMenuItems();
+
+        final michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[] menuItems = new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[items.size()];
+
+        for (int x = 0;x< items.size();x++){
+            menuItems[x] = items.get(x);
+        }
 
         String[] values = new String[menuItems.length];
         for(int x = 0 ;x < menuItems.length ; x++)
         {
-         values[x] = menuItems[x].getItemName();
+            values[x] = menuItems[x].getItemName();
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -52,7 +69,6 @@ public class ListMenuItems extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                menuItem = menuItems[position];
                 Toast.makeText(getApplicationContext(),
                         "Position :" + position + "\n" + "List Item :" + menuItem.getItemName() + "\n" +
                         "Description :" + menuItem.getDescription() + "\n" +

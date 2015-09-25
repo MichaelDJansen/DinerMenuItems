@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import michaeljansen.cput.ac.za.dinermenuitems.R;
+import michaeljansen.cput.ac.za.dinermenuitems.Services.Impl.MenuItemServiceImpl;
 
 public class CreateItem extends AppCompatActivity {
 
@@ -22,6 +23,10 @@ public class CreateItem extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_item);
+
+        MenuItemServiceImpl service = new MenuItemServiceImpl();
+
+        List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> menuItemArrayList = service.getMenuItems();
 
         final Button btnCreate = (Button)findViewById(R.id.btnCreateItem);
         btnCreate.setOnClickListener(new View.OnClickListener() {
@@ -53,10 +58,18 @@ public class CreateItem extends AppCompatActivity {
             }
         });
 
-        List<String> types = new ArrayList<String>();
+        /*List<String> types = new ArrayList<String>();
         types.add("Burgers");
         types.add("Milkshakes");
         types.add("Chilli Dogs");
+        */
+        List<String> types = new ArrayList<String>();
+
+        for (int y = 0;y < menuItemArrayList.size();y++){
+            if(!(types.contains(menuItemArrayList.get(y).getType()))){
+              types.add(menuItemArrayList.get(y).getType());
+            }
+        }
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, types);
 
