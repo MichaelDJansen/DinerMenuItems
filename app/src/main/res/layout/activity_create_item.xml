@@ -1,0 +1,142 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="michaeljansen.cput.ac.za.dinermenuitems.Views.CreateItem"
+    android:background="#ff000f">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Item ID"
+        android:id="@+id/lblNumID"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Item Name"
+        android:id="@+id/lblItemName"
+        android:layout_below="@+id/numItemID"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Type"
+        android:id="@+id/lblType"
+        android:layout_below="@+id/lblItemName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="51dp"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Description"
+        android:id="@+id/lblDescription"
+        android:textColor="#ffffff"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/lblItemName"
+        android:layout_alignStart="@+id/lblItemName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Price"
+        android:id="@+id/lblPrice"
+        android:layout_below="@+id/lblDescription"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Extras"
+        android:id="@+id/lblExtras"
+        android:layout_below="@+id/lblPrice"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="47dp"
+        android:textColor="#ffffff" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Item"
+        android:id="@+id/btnCreateItem"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/numItemID"
+        android:layout_below="@+id/lblNumID"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtItemName"
+        android:layout_below="@+id/lblItemName"
+        android:layout_alignLeft="@+id/numItemID"
+        android:layout_alignStart="@+id/numItemID"
+        android:layout_alignRight="@+id/numItemID"
+        android:layout_alignEnd="@+id/numItemID" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinType"
+        android:layout_below="@+id/lblType"
+        android:layout_alignLeft="@+id/txtItemName"
+        android:layout_alignStart="@+id/txtItemName"
+        android:layout_alignRight="@+id/txtItemName"
+        android:layout_alignEnd="@+id/txtItemName"
+        android:spinnerMode="dialog"
+        android:layout_above="@+id/lblDescription" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/txtDescription"
+        android:layout_below="@+id/lblDescription"
+        android:layout_alignLeft="@+id/spinType"
+        android:layout_alignStart="@+id/spinType" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/numPrice"
+        android:layout_below="@+id/lblPrice"
+        android:layout_alignLeft="@+id/txtDescription"
+        android:layout_alignStart="@+id/txtDescription" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/txtExtras"
+        android:layout_below="@+id/lblExtras"
+        android:layout_alignLeft="@+id/numPrice"
+        android:layout_alignStart="@+id/numPrice" />
+
+</RelativeLayout>
