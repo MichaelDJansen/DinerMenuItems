@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -18,25 +19,160 @@ import michaeljansen.cput.ac.za.dinermenuitems.R;
 import michaeljansen.cput.ac.za.dinermenuitems.Services.Impl.MenuItemServiceImpl;
 
 public class CreateItem extends AppCompatActivity {
+    michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem menuItem;
+
+    Boolean duplicate;
+    int id;
+    String itemName;
+    String type;
+    String description;
+    float price;
+    String extras;
+    List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> menuItemArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_item);
 
-        MenuItemServiceImpl service = new MenuItemServiceImpl();
 
-        List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> menuItemArrayList = service.getMenuItems();
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    MenuItemServiceImpl service = new MenuItemServiceImpl();
+                    menuItemArrayList = service.getMenuItems();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+
+
+        final EditText numItemID =(EditText) findViewById(R.id.numItemID);
+        final EditText txtItemName = (EditText) findViewById(R.id.txtItemName);
+        final Spinner spinner = (Spinner) findViewById(R.id.spinType);
+        final EditText txtDescription = (EditText) findViewById(R.id.txtDescription);
+        final EditText numPrice = (EditText) findViewById(R.id.numPrice);
+        final EditText txtExtras = (EditText) findViewById(R.id.txtExtras);
 
         final Button btnCreate = (Button)findViewById(R.id.btnCreateItem);
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+
+                if(numItemID.getText().toString().equalsIgnoreCase(""))
+                {
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a item ID", Toast.LENGTH_LONG)
+                            .show();
+                }
+                else if(txtItemName.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a item name", Toast.LENGTH_LONG)
+                            .show();
+                }
+                else if(spinner.getSelectedItem().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(),
+                            "Please select a spinner value", Toast.LENGTH_LONG)
+                            .show();
+                }else if(txtDescription.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a description", Toast.LENGTH_LONG)
+                            .show();
+                }else if(txtItemName.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a item name", Toast.LENGTH_LONG)
+                            .show();
+                }else if(numPrice.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a price", Toast.LENGTH_LONG)
+                            .show();
+                }
+                else if(numItemID.getText().toString().length() != 3){
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a 3 digit Id", Toast.LENGTH_LONG)
+                            .show();
+                }
+                else {
+                    duplicate = false;
+                    for (int z = 0; z < menuItemArrayList.size(); z++) {
+                        if (menuItemArrayList.get(z).getMenuItemId() == Integer.parseInt(numItemID.getText().toString())) {
+                            duplicate = true;
+                            Toast.makeText(getApplicationContext(),
+                                    "Duplicate Item ID \n\n Please enter a new ID", Toast.LENGTH_LONG)
+                                    .show();
+                            break;
+                        }
+                        else if (menuItemArrayList.get(z).getItemName().equalsIgnoreCase(txtItemName.getText().toString())) {
+                            duplicate = true;
+                            Toast.makeText(getApplicationContext(),
+                                    "Duplicate Item Name \n\n Please enter a new Item Name", Toast.LENGTH_LONG)
+                                    .show();
+                            break;
+                        }
+                    }
+
+                    if (!duplicate) {
+                        id = Integer.parseInt(numItemID.getText().toString());
+                        itemName = txtItemName.getText().toString();
+                        type = spinner.getSelectedItem().toString();
+                        description = txtDescription.getText().toString();
+                        price = Float.parseFloat(numPrice.getText().toString());
+                        extras = txtExtras.getText().toString();
+
+                        Toast.makeText(getApplicationContext(),
+                                "Id :" + id + "\n" +
+                                        "Item Name :" + itemName + "\n" +
+                                        "Type :" + type + "\n" +
+                                        "Description :" + description + "\n" +
+                                        "Price :" + price + "\n" +
+                                        "Extras:" + extras, Toast.LENGTH_LONG)
+                                .show();
+
+
+                        menuItem = new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.Builder(id, itemName, type, description, price).extras(extras).build();
+
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    MenuItemServiceImpl service = new MenuItemServiceImpl();
+                                    service.addMenuItem(menuItem);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                        thread.start();
+
+                        try {
+                            thread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        finish();
+                    }
+                    else
+                    {
+
+                    }
+                }
             }
         });
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinType);
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -46,10 +182,7 @@ public class CreateItem extends AppCompatActivity {
 
                 String workRequestType = arg0.getItemAtPosition(pos)
                         .toString();
-/*
-                if (pos != 0)
-                    Toast.makeText(WorkOrderOpen.this, workRequestType,
-                            Toast.LENGTH_LONG).show();*/
+
             }
 
             @Override
@@ -58,18 +191,13 @@ public class CreateItem extends AppCompatActivity {
             }
         });
 
-        /*List<String> types = new ArrayList<String>();
-        types.add("Burgers");
-        types.add("Milkshakes");
-        types.add("Chilli Dogs");
-        */
         List<String> types = new ArrayList<String>();
-
-        for (int y = 0;y < menuItemArrayList.size();y++){
-            if(!(types.contains(menuItemArrayList.get(y).getType()))){
-              types.add(menuItemArrayList.get(y).getType());
-            }
-        }
+        types.add("Alcoholic Beverage");
+        types.add("Burgers");
+        types.add("Breakfast");
+        types.add("Chili Dogs");
+        types.add("Milkshakes");
+        types.add("Warm Beverages");
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, types);
 

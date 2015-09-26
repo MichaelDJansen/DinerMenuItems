@@ -21,8 +21,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lstViewItems"
-        android:layout_centerHorizontal="true"
+        android:choiceMode="singleChoice"
+        android:longClickable="true"
         android:layout_below="@+id/lblHeader"
-        android:choiceMode="singleChoice" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/lblDelete" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Long click to delete an item"
+        android:id="@+id/lblDelete"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffffff" />
 
 </RelativeLayout>

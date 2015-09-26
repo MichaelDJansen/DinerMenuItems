@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,6 +24,8 @@ public class ListMenuItems extends AppCompatActivity {
 
     ListView listView ;
     michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem menuItem;
+    List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> menuItems;
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,38 +33,74 @@ public class ListMenuItems extends AppCompatActivity {
         setContentView(R.layout.activity_list_menu_items);
 
         listView = (ListView) findViewById(R.id.lstViewItems);
-/*
-        final michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[] menuItems =
-                new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[]{
-                new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.
-                        Builder(305,"Western Chili Dog","Chili Dog","Chili dog with beans",30.00f).extras("Hot sauce").build(),
-                        new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.
-                        Builder(306,"Harold's hot hamburger","Burger","Burger with Harold's special hot sauce blend",45.00f).extras("extra hot sauce").build(),
-                        new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.
-                        Builder(307,"Travis Terrific hamburger","Burger","Burger with relish and bacon",60.00f).build()
-                };
-*/
-        MenuItemServiceImpl service = new MenuItemServiceImpl();
 
-        List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> items= new ArrayList<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem>();
 
-        items = service.getMenuItems();
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    MenuItemServiceImpl service = new MenuItemServiceImpl();
+                    menuItems = service.getMenuItems();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-        final michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[] menuItems = new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem[items.size()];
+        thread.start();
 
-        for (int x = 0;x< items.size();x++){
-            menuItems[x] = items.get(x);
+        try {
+            thread.join();
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
         }
 
-        String[] values = new String[menuItems.length];
-        for(int x = 0 ;x < menuItems.length ; x++)
+        ArrayList<String> values = new ArrayList<String>();
+        for(int x = 0 ;x < menuItems.size() ; x++)
         {
-            values[x] = menuItems[x].getItemName();
+            values.add(menuItems.get(x).getItemName());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
         listView.setAdapter(adapter);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                menuItem = menuItems.get(pos);
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MenuItemServiceImpl service = new MenuItemServiceImpl();
+                            service.deleteMenuItem(menuItem.getMenuItemId());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                thread.start();
+
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(getApplicationContext(),
+                        menuItem.getItemName() + " Deleted", Toast.LENGTH_LONG)
+                        .show();
+                menuItems.remove(menuItem);
+                adapter.notifyDataSetChanged();
+
+                return true;
+            }
+        });
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -69,23 +108,14 @@ public class ListMenuItems extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Toast.makeText(getApplicationContext(),
-                        "Position :" + position + "\n" + "List Item :" + menuItem.getItemName() + "\n" +
-                        "Description :" + menuItem.getDescription() + "\n" +
-                        "Type :" + menuItem.getType() + "\n" +
-                        "Price :" + menuItem.getPrice(), Toast.LENGTH_LONG)
-                        .show();
+                menuItem = menuItems.get(position);
 
-                /*AlertDialog alertDialog = new AlertDialog.Builder(getApplicationContext()).create();
-                alertDialog.setTitle(itemValue);
-                alertDialog.setMessage("Position :" + position + "\n" + "List Item :"  + itemValue);
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        finish();
-                    }
-                });
-                alertDialog.show();
-                */
+                Toast.makeText(getApplicationContext(),
+                        "List Item :" + menuItem.getItemName() + "\n" +
+                                "Description :" + menuItem.getDescription() + "\n" +
+                                "Type :" + menuItem.getType() + "\n" +
+                                "Price :" + menuItem.getPrice(), Toast.LENGTH_LONG)
+                        .show();
             }
 
         });

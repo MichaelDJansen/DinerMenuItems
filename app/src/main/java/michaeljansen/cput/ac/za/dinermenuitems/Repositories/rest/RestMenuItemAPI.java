@@ -6,8 +6,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem;
 import michaeljansen.cput.ac.za.dinermenuitems.Repositories.RestAPIMenuItem;
@@ -16,13 +19,13 @@ import michaeljansen.cput.ac.za.dinermenuitems.Repositories.RestAPIMenuItem;
  * Created by Michael on 25/09/2015.
  */
 public class RestMenuItemAPI implements RestAPIMenuItem{
-    final String BASE_URL= "https://diner-mdjansen.rhcloud.com/menuItems";
+    final String BASE_URL= "https://diner-mdjansen.rhcloud.com/menuItems/";
 
     final HttpHeaders requestHeaders = RestMethods.getHeaders();
     final RestTemplate restTemplate = RestMethods.getRestTemplate();
 
     public String addMenuItem(MenuItem entity){
-        final String url = BASE_URL+"/create/";
+        final String url = BASE_URL+"/create";
         HttpEntity<MenuItem> requestEntity = new HttpEntity<MenuItem>(entity,requestHeaders);
         try {
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
@@ -36,7 +39,7 @@ public class RestMenuItemAPI implements RestAPIMenuItem{
 
     public String updateMenuItem(MenuItem menuItem)
     {
-        final String url = BASE_URL+"/update/"+menuItem.getMenuItemId();
+        final String url = BASE_URL+"/update"+menuItem.getMenuItemId();
         HttpEntity<MenuItem> requestEntity = new HttpEntity<MenuItem>(menuItem, requestHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, String.class);
         String result = responseEntity.getBody();
@@ -59,15 +62,16 @@ public class RestMenuItemAPI implements RestAPIMenuItem{
         ResponseEntity<MenuItem[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, MenuItem[].class);
         MenuItem[] results = responseEntity.getBody();
 
-        for (MenuItem user : results) {
-            menuItems.add(user);
+        for (MenuItem menuItem : results) {
+            menuItems.add(menuItem);
         }
         return menuItems;
     }
 
     public void deleteMenuItem(int id){
         final String url = BASE_URL+"/delete/"+id ;
-        HttpEntity<MenuItem> requestEntity = new HttpEntity<MenuItem>(requestHeaders);
+        restTemplate.delete(url,id);
+
     }
 
 }
