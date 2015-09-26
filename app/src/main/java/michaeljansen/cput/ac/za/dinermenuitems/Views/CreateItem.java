@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ public class CreateItem extends AppCompatActivity {
     float price;
     String extras;
     List<michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem> menuItemArrayList;
-
+    CheckBox chkUpdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +58,7 @@ public class CreateItem extends AppCompatActivity {
         }
 
 
-
+        chkUpdate = (CheckBox) findViewById(R.id.chkUpdate);
         final EditText numItemID =(EditText) findViewById(R.id.numItemID);
         final EditText txtItemName = (EditText) findViewById(R.id.txtItemName);
         final Spinner spinner = (Spinner) findViewById(R.id.spinType);
@@ -104,69 +105,106 @@ public class CreateItem extends AppCompatActivity {
                             .show();
                 }
                 else {
+                    id = Integer.parseInt(numItemID.getText().toString());
+                    itemName = txtItemName.getText().toString();
+                    type = spinner.getSelectedItem().toString();
+                    description = txtDescription.getText().toString();
+                    price = Float.parseFloat(numPrice.getText().toString());
+                    extras = txtExtras.getText().toString();
                     duplicate = false;
+
                     for (int z = 0; z < menuItemArrayList.size(); z++) {
-                        if (menuItemArrayList.get(z).getMenuItemId() == Integer.parseInt(numItemID.getText().toString())) {
+                        if (menuItemArrayList.get(z).getMenuItemId() == id) {
                             duplicate = true;
-                            Toast.makeText(getApplicationContext(),
+                            if(!chkUpdate.isChecked())
+                            {
+
+                                Toast.makeText(getApplicationContext(),
                                     "Duplicate Item ID \n\n Please enter a new ID", Toast.LENGTH_LONG)
                                     .show();
+                            }
                             break;
                         }
                         else if (menuItemArrayList.get(z).getItemName().equalsIgnoreCase(txtItemName.getText().toString())) {
                             duplicate = true;
-                            Toast.makeText(getApplicationContext(),
-                                    "Duplicate Item Name \n\n Please enter a new Item Name", Toast.LENGTH_LONG)
-                                    .show();
+                            if(!chkUpdate.isChecked())
+                            {
+                                Toast.makeText(getApplicationContext(),
+                                        "Duplicate Item Name \n\n Please enter a new Item Name", Toast.LENGTH_LONG)
+                                        .show();
+                            }
                             break;
                         }
                     }
 
+                    menuItem = new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.Builder(id, itemName, type, description, price).extras(extras).build();
+
                     if (!duplicate) {
-                        id = Integer.parseInt(numItemID.getText().toString());
-                        itemName = txtItemName.getText().toString();
-                        type = spinner.getSelectedItem().toString();
-                        description = txtDescription.getText().toString();
-                        price = Float.parseFloat(numPrice.getText().toString());
-                        extras = txtExtras.getText().toString();
 
-                        Toast.makeText(getApplicationContext(),
-                                "Id :" + id + "\n" +
-                                        "Item Name :" + itemName + "\n" +
-                                        "Type :" + type + "\n" +
-                                        "Description :" + description + "\n" +
-                                        "Price :" + price + "\n" +
-                                        "Extras:" + extras, Toast.LENGTH_LONG)
-                                .show();
+                        if(chkUpdate.isChecked()){
+                            Toast.makeText(getApplicationContext(),
+                                    "No duplicate Item Id found to update", Toast.LENGTH_LONG)
+                                    .show();
 
-
-                        menuItem = new michaeljansen.cput.ac.za.dinermenuitems.Model.MenuItem.Builder(id, itemName, type, description, price).extras(extras).build();
-
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    MenuItemServiceImpl service = new MenuItemServiceImpl();
-                                    service.addMenuItem(menuItem);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-                        thread.start();
-
-                        try {
-                            thread.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
+                        else {
+                            Toast.makeText(getApplicationContext(),
+                                    "Id :" + id + "\n" +
+                                            "Item Name :" + itemName + "\n" +
+                                            "Type :" + type + "\n" +
+                                            "Description :" + description + "\n" +
+                                            "Price :" + price + "\n" +
+                                            "Extras:" + extras, Toast.LENGTH_LONG)
+                                    .show();
 
+
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        MenuItemServiceImpl service = new MenuItemServiceImpl();
+                                        service.addMenuItem(menuItem);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
+                            thread.start();
+
+                            try {
+                                thread.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         finish();
                     }
                     else
                     {
+                        if(chkUpdate.isChecked()){
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        MenuItemServiceImpl service = new MenuItemServiceImpl();
+                                        service.updateMenuItem(menuItem);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
 
+                            thread.start();
+
+                            try {
+                                thread.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            finish();
+                        }
                     }
                 }
             }

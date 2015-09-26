@@ -5,12 +5,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".Dashboard"
     android:backgroundTint="#ff090b"
-    android:background="#ff000f">
+    android:background="#ff000f"
+    android:id="@+id/">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create Menu Item"
+        android:text="Create / Update Menu Item"
         android:id="@+id/btnCreate"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/txtHeader"

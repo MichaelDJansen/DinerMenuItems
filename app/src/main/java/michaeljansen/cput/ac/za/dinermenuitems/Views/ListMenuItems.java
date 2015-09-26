@@ -96,7 +96,7 @@ public class ListMenuItems extends AppCompatActivity {
                         .show();
                 menuItems.remove(menuItem);
                 adapter.notifyDataSetChanged();
-
+                listView.setAdapter(adapter);
                 return true;
             }
         });
@@ -111,7 +111,8 @@ public class ListMenuItems extends AppCompatActivity {
                 menuItem = menuItems.get(position);
 
                 Toast.makeText(getApplicationContext(),
-                        "List Item :" + menuItem.getItemName() + "\n" +
+                        "Item ID :" + menuItem.getMenuItemId() + "\n" +
+                        "Item name :" + menuItem.getItemName() + "\n" +
                                 "Description :" + menuItem.getDescription() + "\n" +
                                 "Type :" + menuItem.getType() + "\n" +
                                 "Price :" + menuItem.getPrice(), Toast.LENGTH_LONG)

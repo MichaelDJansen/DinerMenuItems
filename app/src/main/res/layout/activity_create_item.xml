@@ -139,4 +139,15 @@
         android:layout_alignLeft="@+id/numPrice"
         android:layout_alignStart="@+id/numPrice" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UpdateMode"
+        android:id="@+id/chkUpdate"
+        android:checked="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="#ffffffff" />
+
 </RelativeLayout>
